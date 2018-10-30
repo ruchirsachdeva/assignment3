@@ -84,13 +84,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer() {
-        return (container -> {
-            container.setContextPath("/nemswiftsvc");
-            container.setPort(Integer.valueOf(System.getenv("PORT")));
-        });
-    }
 
 
 }
