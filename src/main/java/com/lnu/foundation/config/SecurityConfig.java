@@ -6,6 +6,7 @@ package com.lnu.foundation.config;
 
 import com.lnu.foundation.auth.StatelessAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,6 +82,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", conf);
         return source;
+    }
+
+    @Bean
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+        return (container -> {
+            container.setContextPath("/nemswiftsvc");
+            container.setPort(Integer.valueOf(System.getenv("PORT")));
+        });
     }
 
 
