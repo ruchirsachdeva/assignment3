@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Login</title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="ctx" th:content="${#httpServletRequest.getContextPath()}"/>
+    <base href="/"/>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap-table/bootstrap-table.min.css"/>
+
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap-table/bootstrap-table.min.js"></script>
+    <link rel="stylesheet" href="/webjars/font-awesome/css/font-awesome.min.css"/>
+</head>
+<body>
+
+
+<div class="container">
+    <h1>Hello physician...</h1>
+    <br/><br/><br/>
+    <form th:object="${loggedInUser}">
+    <div class="row">
+        <label for="image"></label>
+        <img th:attr="src=@{*{image}}" style="width: 150px; height: 150px;"/>
+    </div>
+    <div class="row">
+        <label for="username"></label>
+        <span th:text="${loggedInUser.email}"/>
+    </div>
+    <div class="row">
+        <label for="firstName"></label>
+        <span th:text="*{firstName}"/> <span th:text="*{lastName}"/>
+    </div>
+    </form>
+
+    <div class="row col-md-7 table-responsive">
+        <div th:if="${therapies.isEmpty()}" th:text="@{'No patients for user' + ${loggedInUser.username}}">No
+            patients for user
+        </div>
+        <table id="therapyTable" class="table table table-bordered table-striped table-condensed table-hover"
+               th:unless="${therapies.isEmpty()}">
+            <caption>Patient data</caption>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Patient Name</th>
+                <th>Med Name</th>
+                <th>Therapylist Name</th>
+                <th>Therapylist Medicine</th>
+                <th>Therapylist Dosage</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="therapy, rowStat: ${therapies}"
+                th:style="${rowStat.odd} ? 'color: gray' : 'color: blue;'">
+                <td th:text="${therapy.therapyId}">1</td>
+                <td th:text="${therapy.patient.username}">Patient</td>
+                <td th:text="${therapy.med.username}">Med</td>
+                <td th:text="${therapy.therapylist.name}">therapylist name</td>
+                <td th:text="${therapy.therapylist.medicine}">therapylist Medicine</td>
+                <td th:text="${therapy.therapylist.dosage}">therapylist dosage</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row" th:if="${!therapies.isEmpty()}">
+        <a th:href="@{'/user/'+ ${loggedInUser.username}+ '/tests'}"
+           th:text="@{'See patient tests for ' + ${loggedInUser.username}}"></a>
+    </div>
+
+
+    <br/>
+
+    <div class="row">
+        <form action="#" th:action="@{/connect/google}" th:method="delete">
+            <button type="submit" id="submitButton">Logout</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

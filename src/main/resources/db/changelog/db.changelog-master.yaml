@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: ruchir
+      changes:
+        - createTable:
+            tableName: car
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2
+      author: lnu
+      changes:
+      - sqlFile:
+          dbms: h2, mysql
+          encoding: utf8
+          path: migrations\pd.sql
+          relativeToChangelogFile: true
+          splitStatements: true
+          stripComments: true
+
+  - changeSet:
+       id: 3
+       author: lnu
+       changes:
+       - sqlFile:
+           dbms: h2, mysql
+           encoding: utf8
+           path: migrations\userconnection.sql
+           relativeToChangelogFile: true
+           splitStatements: true
+           stripComments: true
