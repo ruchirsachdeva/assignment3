@@ -8,8 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.social.google.api.Google;
-import org.springframework.social.linkedin.api.LinkedIn;
 import org.springframework.social.security.SocialUserDetails;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Service;
@@ -26,14 +24,11 @@ import java.util.List;
 @Service
 public class UserService implements UserDetailsService, SocialUserDetailsService {
 
-    private static final String PATIENT = "patient";
-    private static final String RESEARCHER = "researcher";
-    private static final String PHYSICIAN = "physician";
+    public static final String PATIENT = "patient";
+    public static final String RESEARCHER = "researcher";
+    public static final String PHYSICIAN = "physician";
     @Autowired
     private UserRepository repository;
-
-    @Autowired
-    BaseProvider socialLoginBean;
 
     @Autowired
     TestSessionRepository testRepository;
@@ -62,24 +57,13 @@ public class UserService implements UserDetailsService, SocialUserDetailsService
         return repository.findByRole(roleRepository.findByName(PHYSICIAN));
     }
 
-    public Collection<Therapy> getMedTherapies(User med) {
-        return therapyRepository.findByMed_Username(med.getEmail());
-    }
-
-    public boolean isMedLoggedIn() {
-        return isPhysicianLoggedIn() || isResearcherLoggedIn();
-    }
-
-    private boolean isPhysicianLoggedIn() {
-        return socialLoginBean.getConnectionRepository().findPrimaryConnection(Google.class) != null;
-    }
-
-    private boolean isResearcherLoggedIn() {
-        return socialLoginBean.getConnectionRepository().findPrimaryConnection(LinkedIn.class) != null;
-    }
-
     public Collection<TestSession> getSessions(String username) {
         return testRepository.findByTest_Therapy_Med_Username(username);
+    }
+
+
+    public Collection<TestSession> getSessions() {
+        return testRepository.findAll();
     }
 
     public Collection<TestSession> getPatientSessions(String username) {
@@ -92,6 +76,11 @@ public class UserService implements UserDetailsService, SocialUserDetailsService
 
     public List<Therapy> getTherapiesByMed(String username) {
         return therapyRepository.findByMed_Username(username);
+    }
+
+
+    public List<Therapy> getTherapies() {
+        return therapyRepository.findAll();
     }
 
 
@@ -156,5 +145,9 @@ public class UserService implements UserDetailsService, SocialUserDetailsService
             }
         }
         return repository.findAll().get(0);
+    }
+
+    public User findUserByUsername(String username) {
+        return repository.findByUsername(username).orElse(null);
     }
 }

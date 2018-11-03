@@ -27,7 +27,7 @@ public class SocialConfig extends SocialConfigurerAdapter {
     private DataSource dataSource;
 
 
-    //TODO no need of JdbcUsersConnectionRepository, use InMemoryUsersConnectionRepository also check logout behaviour in both i.e how connection is removed ,
+    //TODO check if no need of JdbcUsersConnectionRepository, use InMemoryUsersConnectionRepository also check logout behaviour in both i.e how connection is removed ,
     //TODO remove enablessocial and this override method
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {

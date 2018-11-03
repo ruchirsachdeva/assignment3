@@ -1,20 +1,24 @@
 package com.lnu.foundation.controller;
 
-import com.lnu.foundation.auth.TokenHandler;
+import com.lnu.foundation.model.Note;
 import com.lnu.foundation.model.TestSession;
 import com.lnu.foundation.model.Therapy;
 import com.lnu.foundation.model.User;
+import com.lnu.foundation.repository.NoteRepository;
+import com.lnu.foundation.repository.TestSessionRepository;
 import com.lnu.foundation.service.SecurityContextService;
-import com.lnu.foundation.service.SocialUserService;
-import com.lnu.foundation.service.UserParamsValidator;
 import com.lnu.foundation.service.UserService;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Created by rucsac on 10/10/2018.
@@ -25,41 +29,41 @@ public class UserController {
 
 
     @Autowired
-    UserService service;
-
-    @Autowired
-    private UserParamsValidator signupFormValidator;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private SocialUserService socialUserService;
-
-    @Autowired
-    private TokenHandler tokenHandler;
+    private UserService service;
     @Autowired
     private SecurityContextService securityContextService;
+
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private TestSessionRepository sessionRepo;
+
+    @Autowired
+    private NoteRepository noterepo;
+
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/me/tests")
     public Collection<TestSession> getTestSessions() {
+        Collection<TestSession> testSessions = new ArrayList<>();
+        Collection<TestSession> sessions;
         User user = securityContextService.currentUser().orElseThrow(RuntimeException::new);
-        Collection<TestSession> sessions = service.getSessions(user.getUsername());
-        return sessions.stream()
-                .collect(Collectors.toList());
+        if (user.getRole() != null && "researcher".equals(user.getRole().getName())) {
+            sessions = service.getSessions(user.getUsername());
+        } else {
+            sessions = service.getSessions();
+        }
+        return sessions;
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("user/{username}/tests")
     public Collection<TestSession> getPatientTestSessions(@PathVariable String username) {
+        return service.getPatientSessions(username);
+    }
 
-        Collection<TestSession> sessions = service.getPatientSessions(username);
-        return sessions.stream()
-                .collect(Collectors.toList());
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("user/{username}")
+    public User getLocation(@PathVariable String username) {
+        return service.findUserByUsername(username);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
@@ -68,16 +72,43 @@ public class UserController {
         return securityContextService.currentUser().orElseThrow(RuntimeException::new);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("user/me/tests/{testSessionId}/note")
+    public Collection<Note> addNote(@PathVariable Long testSessionId, @RequestBody Note note) {
+        User user = securityContextService.currentUser().orElseThrow(RuntimeException::new);
+        TestSession session = sessionRepo.findOne(testSessionId);
+        note.setMedUser(user);
+        note.setTestSession(session);
+        noterepo.save(note);
+        return noterepo.findByTestSession(session);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/rssfeed")
+    private List<SyndEntry> getRSSFeed() {
+        SyndFeed feed = null;
+        try {
+            String url = "https://www.news-medical.net/tag/feed/parkinsons-disease.aspx";
+            try (XmlReader reader = new XmlReader(new URL(url))) {
+                feed = new SyndFeedInput().build(reader);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return feed.getEntries();
+    }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/therapies")
     public Collection<Therapy> getTherapies() {
         Collection<Therapy> therapies = null;
         User user = securityContextService.currentUser().orElseThrow(RuntimeException::new);
-        if ("physician".equals(user.getRole().getName())
-                || "researcher".equals(user.getRole().getName())
-                || "junior researcher".equals(user.getRole().getName())) {
+        if ("physician".equals(user.getRole().getName())) {
             therapies = service.getTherapiesByMed(user.getUsername());
+        } else if ("researcher".equals(user.getRole().getName())
+                || "junior researcher".equals(user.getRole().getName())) {
+            therapies = service.getTherapies();
         } else {
             therapies = service.getTherapiesByPatient(user.getUsername());
         }
