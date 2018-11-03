@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.UserProfile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -40,19 +38,6 @@ public class SignupForm {
 				+ password + "]";
 	}
 	
-	public static SignupForm fromConnection(Connection<?> connection) {
-		
-        SignupForm form = new SignupForm();
-        
-        if (connection != null) {
-
-            UserProfile socialMediaProfile = connection.fetchUserProfile();
-            form.setEmail(socialMediaProfile.getEmail());
-            form.setName(socialMediaProfile.getFirstName() + " " + socialMediaProfile.getLastName());
-        }
- 
-        return form;
-	}
 
 	public UsernamePasswordAuthenticationToken toAuthenticationToken() {
 		return new UsernamePasswordAuthenticationToken(username, password);

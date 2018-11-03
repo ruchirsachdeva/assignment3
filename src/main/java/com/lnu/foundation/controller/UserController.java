@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,7 +42,6 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/me/tests")
     public Collection<TestSession> getTestSessions() {
-        Collection<TestSession> testSessions = new ArrayList<>();
         Collection<TestSession> sessions;
         User user = securityContextService.currentUser().orElseThrow(RuntimeException::new);
         if (user.getRole() != null && "researcher".equals(user.getRole().getName())) {

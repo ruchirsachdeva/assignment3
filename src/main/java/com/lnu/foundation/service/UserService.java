@@ -1,19 +1,18 @@
 package com.lnu.foundation.service;
 
-import com.lnu.foundation.model.*;
+import com.lnu.foundation.model.SignupForm;
+import com.lnu.foundation.model.TestSession;
+import com.lnu.foundation.model.Therapy;
+import com.lnu.foundation.model.User;
 import com.lnu.foundation.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.social.security.SocialUserDetails;
-import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
  * Created by rucsac on 15/10/2018.
  */
 @Service
-public class UserService implements UserDetailsService, SocialUserDetailsService {
+public class UserService implements UserDetailsService {
 
     public static final String PATIENT = "patient";
     public static final String RESEARCHER = "researcher";
@@ -120,32 +119,6 @@ public class UserService implements UserDetailsService, SocialUserDetailsService
 
     }
 
-    // Will be called after social authentication to fetch user details
-    @Override
-    public SocialUserDetails loadUserByUserId(String userId)
-            throws UsernameNotFoundException, DataAccessException {
-        Userconnection userconnection = userconnectionRepository.findOne(userId);
-
-        if (userconnection != null && "google".equals(userconnection.getProviderId())) {
-            List<User> physicians = getPhysician();
-            if (!CollectionUtils.isEmpty(physicians)) {
-                return physicians.get(0);
-            }
-        }
-        if (userconnection != null && "linkedin".equals(userconnection.getProviderId())) {
-            List<User> patient = getPatient();
-            if (!CollectionUtils.isEmpty(patient)) {
-                return patient.get(0);
-            }
-        }
-        if (userconnection != null && "facebook".equals(userconnection.getProviderId())) {
-            List<User> researcher = getResearcher();
-            if (!CollectionUtils.isEmpty(researcher)) {
-                return researcher.get(0);
-            }
-        }
-        return repository.findAll().get(0);
-    }
 
     public User findUserByUsername(String username) {
         return repository.findByUsername(username).orElse(null);

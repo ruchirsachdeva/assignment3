@@ -3,7 +3,7 @@ package com.lnu.foundation.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.social.security.SocialUserDetails;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class User implements SocialUserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,9 +78,4 @@ public class User implements SocialUserDetails {
         return true;
     }
 
-    @Override
-    @JsonIgnore
-    public String getUserId() {
-        return getUsername();
-    }
 }

@@ -5,7 +5,6 @@ import com.lnu.foundation.auth.TokenHandler;
 import com.lnu.foundation.model.User;
 import com.lnu.foundation.repository.UserRepository;
 import com.lnu.foundation.service.SecurityContextService;
-import com.lnu.foundation.service.SocialUserService;
 import lombok.Value;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.social.connect.Connection;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,24 +31,9 @@ public class LoginController {
     @Autowired
     private SecurityContextService securityContextService;
 
-    @Autowired
-    private SocialUserService socialUserService;
-
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = {"/api/auth/social"}, method = RequestMethod.POST)
-    public AuthResponse loginToSOcial(@RequestBody(required = false) AuthParams params) throws AuthenticationException {
-
-        try {
-            Connection<?> connection = socialUserService.getConnection(params.getProvider(), params.getToken());
-            if (connection != null) {
-                return socialUserService.authenticateSocialUser(connection).map(u -> {
-                    final String token = tokenHandler.createTokenForUser(u);
-                    return new AuthResponse(token);
-                }).orElseThrow(RuntimeException::new);
-            }
-        } catch (Exception e) {
-            log.error("Social login threw exception...",e);
-        }
+    public AuthResponse loginToSocial(@RequestBody(required = false) AuthParams params) throws AuthenticationException {
 
         if ("linkedin".equals(params.getProvider())) {
             User researcher = userRepository.findByRole_Name("researcher").get(0);
