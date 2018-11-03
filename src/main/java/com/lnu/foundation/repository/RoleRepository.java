@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  * Created by rucsac on 10/10/2018.
  */
 @RepositoryRestResource
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Role findByName(String name);
 }

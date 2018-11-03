@@ -31,7 +31,7 @@ public class LoginController {
     @Autowired
     private SecurityContextService securityContextService;
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
     @RequestMapping(value = {"/api/auth/social"}, method = RequestMethod.POST)
     public AuthResponse loginToSocial(@RequestBody(required = false) AuthParams params) throws AuthenticationException {
 
@@ -67,13 +67,13 @@ public class LoginController {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
     @RequestMapping(value = {"/", "/login"}, method = RequestMethod.OPTIONS)
     public ResponseEntity loginOption() {
         return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
     @RequestMapping(value = {"/api/auth"}, method = RequestMethod.POST)
     public AuthResponse auth(@RequestBody(required = false) AuthParams params) throws AuthenticationException {
 

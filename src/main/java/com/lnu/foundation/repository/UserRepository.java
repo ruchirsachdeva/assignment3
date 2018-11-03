@@ -12,7 +12,7 @@ import java.util.Optional;
  * Created by rucsac on 10/10/2018.
  */
 @RepositoryRestResource
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(Role role);
     List<User> findByRole_Name(String role);

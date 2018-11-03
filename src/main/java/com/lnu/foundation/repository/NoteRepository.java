@@ -11,7 +11,7 @@ import java.util.Collection;
  * Created by rucsac on 10/10/2018.
  */
 @RepositoryRestResource
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
 public interface NoteRepository extends JpaRepository<Note, Long> {
     Collection<Note> findByTestSession(TestSession s);
 }
