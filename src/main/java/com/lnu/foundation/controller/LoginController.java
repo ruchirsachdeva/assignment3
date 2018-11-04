@@ -83,14 +83,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         return securityContextService.currentUser().map(u -> {
-            String token;
-            if (u.getRole() != null && "patient".equals(u.getRole().getName())) {
-                token = tokenHandler.createTokenForUser(u);
-            } else {
-                User patient = userRepository.findByRole_Name("patient").get(0);
-                token = tokenHandler.createTokenForUser(patient);
-
-            }
+            String token = tokenHandler.createTokenForUser(u);
             return new AuthResponse(token);
         }).orElseThrow(RuntimeException::new); // it does not happen.
     }
