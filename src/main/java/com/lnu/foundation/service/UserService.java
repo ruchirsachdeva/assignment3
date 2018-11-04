@@ -21,40 +21,19 @@ import java.util.List;
  * Created by rucsac on 15/10/2018.
  */
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
-
-    public static final String PATIENT = "patient";
-    public static final String RESEARCHER = "researcher";
-    public static final String PHYSICIAN = "physician";
     @Autowired
     private UserRepository repository;
 
     @Autowired
-    TestSessionRepository testRepository;
+    private TestSessionRepository testRepository;
 
     @Autowired
-    TherapyRepository therapyRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
+    private TherapyRepository therapyRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserconnectionRepository userconnectionRepository;
-
-    public List<User> getPatient() {
-        return repository.findByRole(roleRepository.findByName(PATIENT));
-    }
-
-    public List<User> getResearcher() {
-        return repository.findByRole(roleRepository.findByName(RESEARCHER));
-    }
-
-    public List<User> getPhysician() {
-        return repository.findByRole(roleRepository.findByName(PHYSICIAN));
-    }
 
     public Collection<TestSession> getSessions(String username) {
         return testRepository.findByTest_Therapy_Med_Username(username);
@@ -117,10 +96,15 @@ public class UserService implements UserDetailsService {
         return user;
 
 
+
     }
 
 
     public User findUserByUsername(String username) {
         return repository.findByUsername(username).orElse(null);
+    }
+
+    public User findByRole_Name(String role) {
+        return repository.findByRole_Name(role).get(0);
     }
 }

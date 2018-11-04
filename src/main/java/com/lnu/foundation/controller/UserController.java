@@ -4,8 +4,7 @@ import com.lnu.foundation.model.Note;
 import com.lnu.foundation.model.TestSession;
 import com.lnu.foundation.model.Therapy;
 import com.lnu.foundation.model.User;
-import com.lnu.foundation.repository.NoteRepository;
-import com.lnu.foundation.repository.TestSessionRepository;
+import com.lnu.foundation.service.NoteService;
 import com.lnu.foundation.service.SecurityContextService;
 import com.lnu.foundation.service.UserService;
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -33,10 +32,7 @@ public class UserController {
     private SecurityContextService securityContextService;
 
     @Autowired
-    private TestSessionRepository sessionRepo;
-
-    @Autowired
-    private NoteRepository noterepo;
+    private NoteService noteService;
 
 
     @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
@@ -60,7 +56,7 @@ public class UserController {
 
     @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
     @GetMapping("user/{username}")
-    public User getLocation(@PathVariable String username) {
+    public User getUser(@PathVariable String username) {
         return service.findUserByUsername(username);
     }
 
@@ -74,11 +70,7 @@ public class UserController {
     @PostMapping("user/me/tests/{testSessionId}/note")
     public Collection<Note> addNote(@PathVariable Long testSessionId, @RequestBody Note note) {
         User user = securityContextService.currentUser().orElseThrow(RuntimeException::new);
-        TestSession session = sessionRepo.findOne(testSessionId);
-        note.setMedUser(user);
-        note.setTestSession(session);
-        noterepo.save(note);
-        return noterepo.findByTestSession(session);
+        return noteService.addNote(testSessionId, note, user);
     }
 
 
