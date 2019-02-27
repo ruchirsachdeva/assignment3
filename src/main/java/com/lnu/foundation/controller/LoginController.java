@@ -2,6 +2,7 @@ package com.lnu.foundation.controller;
 
 
 import com.lnu.foundation.auth.TokenHandler;
+import com.lnu.foundation.model.SignupForm;
 import com.lnu.foundation.model.User;
 import com.lnu.foundation.service.SecurityContextService;
 import com.lnu.foundation.service.UserService;
@@ -56,6 +57,21 @@ public class LoginController {
     public AuthResponse login(@RequestBody(required = false) AuthParams params) throws AuthenticationException {
 
         if (params != null) {
+            final UsernamePasswordAuthenticationToken loginToken = params.toAuthenticationToken();
+            securityContextService.authenticate(loginToken);
+        }
+        return securityContextService.currentUser().map(u -> {
+            String token = tokenHandler.createTokenForUser(u);
+            return new AuthResponse(token);
+        }).orElseThrow(RuntimeException::new); // it does not happen.
+    }
+
+    @CrossOrigin(origins = {"http://localhost:4200", "https://lit-beach-29911.herokuapp.com"})
+    @RequestMapping(value = {"/api/auth/create"}, method = RequestMethod.POST)
+    public AuthResponse create(@RequestBody(required = false) SignupForm params) throws AuthenticationException {
+
+        if (params != null) {
+            this.userService.signup(params);
             final UsernamePasswordAuthenticationToken loginToken = params.toAuthenticationToken();
             securityContextService.authenticate(loginToken);
         }
