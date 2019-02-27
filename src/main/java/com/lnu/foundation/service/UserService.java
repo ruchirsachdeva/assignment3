@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
     public User signup(SignupForm signupForm) {
         final User user = new User();
         user.setEmail(signupForm.getEmail());
-        user.setUsername(signupForm.getEmail());
+        user.setUsername(signupForm.getUsername());
         user.setFirstName(signupForm.getName());
         if (signupForm.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(signupForm.getPassword()));

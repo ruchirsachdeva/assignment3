@@ -21,9 +21,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    private
-    @NonNull
-    String username;
+    private String username;
     private String email;
     @ManyToOne
     @JoinColumn(name = "role_id")
