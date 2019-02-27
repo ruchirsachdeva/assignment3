@@ -24,4 +24,8 @@ public interface TestSessionRepository extends JpaRepository<TestSession, Long> 
 
     @RestResource(path = "byPatientId", rel = "byPatientId")
     Collection<TestSession> findByTest_Therapy_Patient_UserId(@Param("id") Long id);
+
+
+    @RestResource(path = "byTherapyId", rel = "byTherapyId")
+    Collection<TestSession> findByTest_Therapy_TherapyId(@Param("id") Long id);
 }
