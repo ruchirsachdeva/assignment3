@@ -72,6 +72,8 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
         }
         user.setProvider(signupForm.getProvider());
+        user.setLat(signupForm.getLatitude());
+        user.setLongitude(signupForm.getLongitude());
         repository.save(user);
         return user;
     }
@@ -94,7 +96,6 @@ public class UserService implements UserDetailsService {
 //        grantedAuthorities.add(new SimpleGrantedAuthority("LOGGED_USER"));
         //new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities)
         return user;
-
 
 
     }

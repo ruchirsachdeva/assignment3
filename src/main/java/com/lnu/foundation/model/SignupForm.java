@@ -31,6 +31,9 @@ public class SignupForm {
 
 	private String accessToken;
 
+	private Double latitude;
+	private Double longitude;
+
 
 	@Override
 	public String toString() {
